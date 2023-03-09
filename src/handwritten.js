@@ -162,3 +162,38 @@ export const parseJSON = (jsonStr) => {
   }
   throw new SyntaxError('Invalid JSON string');
 };
+
+// JSON.stringify()
+export const myStringify = (obj, pretty) => {
+  const result = [];
+
+  // 遍历对象的属性
+  for (let key in obj) {
+    // 判断属性值是否是函数类型或undefined类型
+    if (typeof obj[key] === 'function' || typeof obj[key] === 'undefined') {
+      continue;
+    }
+
+    // 将属性名和对应的值添加到数组中
+    const value = obj[key];
+
+    if (typeof value === 'string') {
+      result.push(`"${key}":"${value}"`);
+    } else if (typeof value === 'number' || typeof value === 'boolean' || value === null) {
+      result.push(`"${key}":${value}`);
+    }
+
+    // 如果属性值是一个对象，则递归调用stringify方法
+    else if (typeof value === 'object') {
+      const nested = stringify(value, pretty);
+      result.push(`"${key}":${nested}`);
+    }
+  }
+
+  // 根据pretty选项控制输出结果的格式
+  if (pretty) {
+    return `{\n${result.join(',\n')}\n}`;
+  } else {
+    return `{${result.join(',')}}`;
+  }
+};
