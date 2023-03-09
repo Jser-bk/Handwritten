@@ -57,3 +57,102 @@ export const myInstanceOf = (leftValue, rightValue) => {
     leftValue = leftValue.__proto__;
   }
 };
+
+// new操作符
+export const myNew = () => {
+  // 获取构造函数和参数
+  const Constructor = Array.prototype.shift.call(arguments);
+  const args = arguments;
+  // 创建一个新的对象，并将其原型指向构造函数的原型
+  const obj = Object.create(Constructor.prototype);
+  // 将构造函数的this指向新创建的对象，并执行构造函数
+  const result = Constructor.apply(obj, args);
+  // 如果构造函数返回一个对象，则返回该对象；否则返回新创建的对象
+  if (result && (typeof result === 'object' || typeof result === 'function')) {
+    return result;
+  }
+  return obj;
+};
+
+// call
+export const myCall = (context, ...args) => {
+  context = context || window;
+  context.fn = this;
+  const result = context.fn(...args);
+  delete context.fn;
+  return result;
+};
+
+// apply
+export const myApply = (thisArg, argsArray) => {
+  thisArg = thisArg || window;
+  let fn = Symbol('fn');
+  thisArg[fn] = this;
+  let result = thisArg[fn](...argsArray);
+  delete thisArg[fn];
+  return result;
+};
+
+// bind
+export const myBind = (thisArg) => {
+  var self = this;
+  var args = Array.prototype.slice.call(arguments, 1);
+  return function () {
+    var bindArgs = Array.prototype.slice.call(arguments);
+    return self.apply(thisArg, args.concat(bindArgs));
+  };
+};
+
+// Object.create()
+export const create = (obj) => {
+  function F() {}
+  F.prototype = obj;
+  return new F();
+};
+
+// JSON.parse
+export const parseJSON = (jsonStr) => {
+  jsonStr = jsonStr.trim();
+  if (jsonStr === '') {
+    return null;
+  }
+  if (jsonStr[0] === '{') {
+    let obj = {};
+    jsonStr = jsonStr.slice(1, -1);
+    const regex = /"(.+?)":\s*(.+?)(?=,|}|$)/gs;
+    let match;
+    while ((match = regex.exec(jsonStr)) !== null) {
+      let key = match[1];
+      let value = match[2];
+      obj[key] = parseJSON(value);
+    }
+    return obj;
+  }
+  if (jsonStr[0] === '[') {
+    let arr = [];
+    jsonStr = jsonStr.slice(1, -1);
+    const regex = /(?<=^|,)\s*(.+?)(?=,|]|$)/gs;
+    let match;
+    while ((match = regex.exec(jsonStr)) !== null) {
+      let value = match[1];
+      arr.push(parseJSON(value));
+    }
+    return arr;
+  }
+  if (/^-?(?:0|[1-9]\d*)(?:.\d+)?(?:[eE][+-]?\d+)?$/.test(jsonStr)) {
+    return parseFloat(jsonStr);
+  }
+  if (jsonStr === 'true') {
+    return true;
+  }
+  if (jsonStr === 'false') {
+    return false;
+  }
+  if (jsonStr === 'null') {
+    return null;
+  }
+  if (/^".*"$/.test(jsonStr) || /^'.*'$/.test(jsonStr)) {
+    return jsonStr.slice(1, -1).replace(/\(.)/g, '$1');
+  }
+  throw new SyntaxError('Invalid JSON string');
+};
