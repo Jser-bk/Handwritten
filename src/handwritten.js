@@ -110,12 +110,13 @@ export const create = (obj) => {
   return new F();
 };
 
-// JSON.parse
+// JSON.parse()
 export const parseJSON = (jsonStr) => {
   jsonStr = jsonStr.trim();
   if (jsonStr === '') {
     return null;
   }
+  // 对象处理
   if (jsonStr[0] === '{') {
     let obj = {};
     jsonStr = jsonStr.slice(1, -1);
@@ -128,6 +129,7 @@ export const parseJSON = (jsonStr) => {
     }
     return obj;
   }
+  // 数组处理
   if (jsonStr[0] === '[') {
     let arr = [];
     jsonStr = jsonStr.slice(1, -1);
@@ -139,18 +141,22 @@ export const parseJSON = (jsonStr) => {
     }
     return arr;
   }
+  // 数字处理
   if (/^-?(?:0|[1-9]\d*)(?:.\d+)?(?:[eE][+-]?\d+)?$/.test(jsonStr)) {
     return parseFloat(jsonStr);
   }
+  // Boolean类型处理
   if (jsonStr === 'true') {
     return true;
   }
   if (jsonStr === 'false') {
     return false;
   }
+  // null处理
   if (jsonStr === 'null') {
     return null;
   }
+  // 字符串处理
   if (/^".*"$/.test(jsonStr) || /^'.*'$/.test(jsonStr)) {
     return jsonStr.slice(1, -1).replace(/\(.)/g, '$1');
   }
