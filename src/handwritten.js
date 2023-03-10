@@ -1,4 +1,5 @@
 // 防抖
+
 export const debounce = (fn, delay) => {
   let timer;
   return function () {
@@ -196,4 +197,20 @@ export const myStringify = (obj, pretty) => {
   } else {
     return `{${result.join(',')}}`;
   }
+};
+
+// Promise.all()
+export const promiseAll = async (promises) => {
+  const results = [];
+
+  for (const promise of promises) {
+    try {
+      const result = await Promise.resolve(promise);
+      results.push(result);
+    } catch (reason) {
+      throw reason;
+    }
+  }
+
+  return results;
 };
