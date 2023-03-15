@@ -214,3 +214,84 @@ export const promiseAll = async (promises) => {
 
   return results;
 };
+
+// toTree1
+function arrayToTreeRec(nodes, parentId = null) {
+  return nodes
+    .filter((node) => node.parentId === parentId)
+    .map((node) => ({ ...node, children: arrayToTreeRec(nodes, node.id) }));
+}
+
+// toTree2
+function arrayToTreeLoop(nodes) {
+  const map = {};
+  const tree = [];
+
+  for (const node of nodes) {
+    map[node.id] = { ...node, children: [] };
+  }
+
+  for (const node of Object.values(map)) {
+    if (node.parentId === null) {
+      tree.push(node);
+    } else {
+      map[node.parentId].children.push(node);
+    }
+  }
+
+  return tree;
+}
+
+// toTree3
+function arrayToTreeReduce(nodes) {
+  const map = {};
+  const tree = nodes.reduce((acc, node) => {
+    map[node.id] = { ...node, children: [] };
+
+    if (node.parentId === null) {
+      acc.push(map[node.id]);
+    } else {
+      map[node.parentId].children.push(map[node.id]);
+    }
+
+    return acc;
+  }, []);
+
+  return tree;
+}
+
+// toTree4
+function arrayToTreeMap(nodes) {
+  const map = new Map(nodes.map((node) => [node.id, { ...node, children: [] }]));
+  const tree = [];
+
+  for (const node of map.values()) {
+    if (node.parentId === null) {
+      tree.push(node);
+    } else {
+      map.get(node.parentId).children.push(node);
+    }
+  }
+
+  return tree;
+}
+
+// toTree5
+function arrayToTreeDFS(nodes) {
+  const map = new Map(nodes.map((node) => [node.id, { ...node, children: [] }]));
+  const tree = [];
+  for (const node of map.values()) {
+    if (node.parentId === null) {
+      dfs(node, tree);
+    }
+  }
+  function dfs(node, parent) {
+    if (parent) {
+      parent.children.push(node);
+    }
+    for (const child of node.children) {
+      dfs(map.get(child.id), node);
+    }
+  }
+  return tree;
+}
