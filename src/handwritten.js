@@ -216,14 +216,14 @@ export const promiseAll = async (promises) => {
 };
 
 // toTree1
-function arrayToTreeRec(nodes, parentId = null) {
+export const arrayToTreeRec = (nodes, parentId = null) => {
   return nodes
     .filter((node) => node.parentId === parentId)
     .map((node) => ({ ...node, children: arrayToTreeRec(nodes, node.id) }));
-}
+};
 
 // toTree2
-function arrayToTreeLoop(nodes) {
+export const arrayToTreeLoop = (nodes) => {
   const map = {};
   const tree = [];
 
@@ -240,10 +240,10 @@ function arrayToTreeLoop(nodes) {
   }
 
   return tree;
-}
+};
 
 // toTree3
-function arrayToTreeReduce(nodes) {
+export const arrayToTreeReduce = (nodes) => {
   const map = {};
   const tree = nodes.reduce((acc, node) => {
     map[node.id] = { ...node, children: [] };
@@ -258,10 +258,10 @@ function arrayToTreeReduce(nodes) {
   }, []);
 
   return tree;
-}
+};
 
 // toTree4
-function arrayToTreeMap(nodes) {
+export const arrayToTreeMap = (nodes) => {
   const map = new Map(nodes.map((node) => [node.id, { ...node, children: [] }]));
   const tree = [];
 
@@ -274,10 +274,10 @@ function arrayToTreeMap(nodes) {
   }
 
   return tree;
-}
+};
 
 // toTree5
-function arrayToTreeDFS(nodes) {
+export const arrayToTreeDFS = (nodes) => {
   const map = new Map(nodes.map((node) => [node.id, { ...node, children: [] }]));
   const tree = [];
   for (const node of map.values()) {
@@ -294,4 +294,13 @@ function arrayToTreeDFS(nodes) {
     }
   }
   return tree;
-}
+};
+
+// map
+export const map = (arr, callback) => {
+  const result = []; // 创建一个空数组
+  for (let i = 0; i < arr.length; i++) {
+    result.push(callback(arr[i], i, arr)); // 调用回调函数，将结果添加到新数组中
+  }
+  return result; // 返回新数组
+};
