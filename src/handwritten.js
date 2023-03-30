@@ -304,3 +304,18 @@ export const map = (arr, callback) => {
   }
   return result; // 返回新数组
 };
+
+// 二分查找
+export const binarySearch = (arr, target) => {
+  const middle = Math.floor(arr.length / 2);
+  if (arr[middle] === target) {
+    return middle;
+  }
+  if (arr[middle] < target && arr.length > 1) {
+    return binarySearch(arr.slice(middle), target) + middle;
+  }
+  if (arr[middle] > target && arr.length > 1) {
+    return binarySearch(arr.slice(0, middle), target);
+  }
+  return -1;
+};
